@@ -1,0 +1,143 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Conversor de Moedas</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" [fullscreen]="true">
+  <div class="container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Conversão de Moedas</ion-card-title>
+        <ion-card-subtitle>Converta moedas estrangeiras</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <!-- Input pro valor que eu vou converter-->
+        <ion-item>
+          <ion-label position="stacked">Valor</ion-label>
+          <ion-input 
+            type="number" 
+            [(ngModel)]="amount" 
+            placeholder="Digite o valor"
+            inputmode="decimal">
+          </ion-input>
+        </ion-item>
+
+        <ion-grid>
+          <ion-row>
+            <!-- Seleção da moeda que vai ser "convertida" -->
+            <ion-col size="6">
+              <ion-item>
+                <ion-label position="stacked">De</ion-label>
+                <ion-select [(ngModel)]="fromCurrency" interface="action-sheet" (ionChange)="loadExampleRates()">
+                  <ion-select-option *ngFor="let c of currencies" [value]="c">
+                    {{ c }} - {{ getCurrencyName(c) }}
+                  </ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <!-- Seleção da moeda que vou comparar -->
+            <ion-col size="6">
+              <ion-item>
+                <ion-label position="stacked">Para</ion-label>
+                <ion-select [(ngModel)]="toCurrency" interface="action-sheet">
+                  <ion-select-option *ngFor="let c of currencies" [value]="c">
+                    {{ c }} - {{ getCurrencyName(c) }}
+                  </ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
+        <!-- Botão pra converter -->
+        <ion-button 
+          expand="block" 
+          (click)="convert()" 
+          [disabled]="!isFormValid()"
+          class="convert-button">
+          <ion-icon name="swap-horizontal" slot="start"></ion-icon>
+          <!-- animação de giro no botão, só pra personalizar -->
+          <ion-spinner *ngIf="isConverting" name="crescent" slot="start"></ion-spinner>
+          {{ isConverting ? 'Convertendo...' : 'Converter' }}
+        </ion-button>
+
+        <!-- Botão para inverter as moedas de uma pra outra -->
+        <ion-button 
+          expand="block" 
+          fill="outline" 
+          (click)="swapCurrencies()"
+          class="swap-button">
+          <ion-icon name="swap-vertical" slot="start"></ion-icon>
+          Inverter Moedas
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- card que vai exibir essa conversão -->
+    <ion-card *ngIf="result !== null" class="result-card">
+      <ion-card-header>
+        <ion-card-title>Resultado</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="result-display">
+          <!-- valor original junto com o nome da moeda -->
+          <div class="currency-display">
+            <span class="original-amount">{{ amount | number:'1.2-2' }} {{ fromCurrency }}</span>
+            <span class="currency-name">({{ getCurrencyName(fromCurrency) }})</span>
+          </div>
+          <ion-icon name="arrow-forward" class="arrow-icon"></ion-icon>
+          <!-- valor convertido junto com o nome da moeda -->
+          <div class="currency-display">
+            <span class="converted-amount">{{ result | number:'1.2-2' }} {{ toCurrency }}</span>
+            <span class="currency-name">({{ getCurrencyName(toCurrency) }})</span>
+          </div>
+        </div>
+        
+        <!-- exibe a taxa de câmbio que teve na conversão de uma moeda pra outras -->
+        <div class="conversion-rate" *ngIf="conversionRate">
+          Taxa de câmbio: 1 {{ fromCurrency }} = {{ conversionRate | number:'1.4-4' }} {{ toCurrency }}
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Card que mostra as taxas de câmbio da minha moeda para as outras  -->
+    <ion-card *ngIf="exampleRates.length > 0" class="example-rates">
+      <ion-card-header>
+        <ion-card-title>
+          Taxas de moedas de cambio (moeda atual: {{fromCurrency}} - {{ getCurrencyName(fromCurrency) }})
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <!-- Lista cada taxa de câmbio disponível -->
+          <ion-item *ngFor="let rate of exampleRates">
+            <ion-label>
+              <div class="currency-item">
+                1 {{fromCurrency}} ({{ getCurrencyName(fromCurrency) }})
+              </div>
+            </ion-label>
+            <ion-note slot="end">
+              <div class="currency-item">
+                {{rate.value | number:'1.4-4'}} 
+                <!-- Mostra o código e nome completo da moeda -->
+                <span class="currency-fullname">{{ rate.currency }} ({{ rate.name }})</span>
+              </div>
+            </ion-note>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+    
+    <!-- aqui pra caso der erro -->
+    <div *ngIf="error" class="error-message">
+      <ion-text color="danger">
+        <p>{{ error }}</p>
+      </ion-text>
+    </div>
+  </div>
+</ion-content>

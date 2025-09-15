@@ -1,0 +1,64 @@
+.container {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.convert-button {
+  margin: 20px 0 10px 0;
+  --border-radius: 12px;
+  height: 50px;
+}
+
+.swap-button {
+  --border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.result-card, .example-rates {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.result-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.original-amount, .converted-amount {
+  font-size: 1.4em;
+  font-weight: bold;
+  color: var(--ion-color-primary);
+}
+
+.arrow-icon {
+  font-size: 1.8em;
+  color: var(--ion-color-medium);
+}
+
+.conversion-rate {
+  margin-top: 15px;
+  color: var(--ion-color-medium);
+  font-size: 0.9em;
+}
+
+.error-message {
+  text-align: center;
+  margin-top: 20px;
+  padding: 15px;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+}
+
+.example-rates ion-list {
+  background: transparent;
+}
+
+.example-rates ion-item {
+  --background: transparent;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+}
